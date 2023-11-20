@@ -1,0 +1,43 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model User {
+  id      Int    @id @default(autoincrement())
+  name    String
+  email   String
+  videos Video[]
+}
+
+model Video {
+  id      Int    @id @default(autoincrement())
+  url          String
+  uploadedDate DateTime @default(now())
+  goLiveDate   DateTime @updatedAt
+  videoId Int
+  user User @relation(fields: [videoId], references: [id])
+  videotag VideoTag[]
+}
+
+model VideoTag {
+  id      Int    @id @default(autoincrement())
+  VideoId Int
+  video Video @relation(fields: [VideoId], references: [id])
+  TagId String
+  tag Tag @relation(fields: [TagId], references: [id])
+}
+
+model Tag {
+  id String @id @unique
+  Description String
+  Tag VideoTag[]
+}
